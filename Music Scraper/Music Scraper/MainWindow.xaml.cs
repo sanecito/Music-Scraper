@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace Music_Scraper
 {
@@ -31,13 +32,31 @@ namespace Music_Scraper
 
         private void Scrape_Click(object sender, RoutedEventArgs e)
         {
-            string samplePath = @"C:\Users\scott\Music";
-            string musicRegex = @".*\.mp3|.*\.flac";
+            var dlg = new CommonOpenFileDialog();
+            dlg.Title = "Select Folder";
+            dlg.IsFolderPicker = true;
+            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
 
-            IEnumerable<string> test = GetFiles(samplePath, musicRegex);
-            foreach (string file in test)
+            dlg.AddToMostRecentlyUsedList = false;
+            dlg.AllowNonFileSystemItems = false;
+            dlg.DefaultDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
+            dlg.EnsureFileExists = true;
+            dlg.EnsurePathExists = true;
+            dlg.EnsureReadOnly = false;
+            dlg.EnsureValidNames = true;
+            dlg.Multiselect = false;
+            dlg.ShowPlacesList = true;
+
+            if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                Console.WriteLine(file);
+                string samplePath = @"C:\Users\scott\Music";
+                string musicRegex = @".*\.mp3|.*\.flac";
+
+                IEnumerable<string> test = GetFiles(dlg.FileName, musicRegex);
+                foreach (string file in test)
+                {
+                    Console.WriteLine(file);
+                }
             }
         }
 
